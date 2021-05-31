@@ -1,0 +1,20 @@
+/**
+ * 模式2-定义属性
+ * */
+if (isLoadApp) {
+    include ':app', ':davi-plu'
+}
+include ':lifecycle-plugin'
+rootProject.name = 'DaviPlu'
+
+
+/**
+ * 1）Initialization初始化阶段
+ *
+ * 2）Configuration配置阶段
+ *
+ * 3）Execution执行阶段
+ * */
+println "【settings.gradle】Initialization初始化阶段 开始>>> "
+
+

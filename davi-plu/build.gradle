@@ -1,0 +1,46 @@
+//groovy 插件
+apply plugin: 'groovy'
+
+
+//视频没有的？???
+// Could not find method mavenDeployer() for arguments
+//maven仓库上传需要用到的
+apply plugin: 'maven'
+
+//视频没有的？???
+//引入gradle的API代码
+dependencies {
+    implementation gradleApi()
+}
+
+
+sourceSets {
+    main {
+        //指定groovy源码的位置
+        groovy {
+            srcDir 'src/main/groovy'
+        }
+
+        //指定资源的位置
+        resources {
+            srcDir 'src/main/resources'
+        }
+    }
+}
+
+//视频没有的？????
+//插件需要编译，然后上传maven仓库后，才能使用
+//发布到maven仓库，这里我们发布到本地仓库，../代表当前目录的父目录
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            //设置插件的GAV参数
+            pom.groupId = 'com.davi.pkg'//你的包名
+            pom.artifactId = 'dp'//这个随意起一个，发布后就是这个插件的名称
+            pom.version = '1.1.7'//版本号
+            //文件发布到下面目录8
+            repository(url: uri('../repo'))
+        }
+    }
+}
+

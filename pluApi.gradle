@@ -1,0 +1,38 @@
+/***
+ * SourceSet
+ *  - 与项目结构有关
+ *  - 安卓默认情况下，代码是放在src/main/java，资源放在src/main/res中，当然还有其他（如：so等）
+ *  - 通过改变SourceSet属性，是可以自己指定代码/资源放的目录（这个比maven强，因为maven是不可以指定或者添加的）
+ *  -
+ * */
+
+android {
+    sourceSets {
+        main {
+            //【改变so存放位置】默认情况，so存放在app/src/main/jniLibs中，现在改为app/libs下
+            jniLibs.srcDirs = ['libs']
+        }
+    }
+}
+
+android {
+    sourceSets {
+        main {
+            //资源分模块（有图....）
+            res.srcDirs = ['src/main/res', 'src/main/res-davi']
+        }
+    }
+}
+
+
+/**
+ * 自定义插件
+ * com.davi.pkg
+ * */
+//见 【app模块】的gradle
+//见 【davi-plu】模块
+
+
+
+
+

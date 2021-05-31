@@ -1,0 +1,217 @@
+println "=====================================start fileApi======================================="
+
+
+/***
+ * （一）
+ * */
+//当前根工程的目录
+println "当前根工程的目录 : " + getRootDir().getAbsoluteFile()
+
+//当前工程，build目录
+println "当前工程build : " + getBuildDir().getAbsoluteFile()
+
+//当前工程，路径目录
+println "当前工程的路径 : " + getProjectDir().getAbsoluteFile()
+
+
+/***
+ * （二）
+ * */
+
+//文件位置定位
+def fileTxt(String p) {
+    try {
+        def file = file(p)
+        return file.text
+    } catch (GradleException e) {
+        println "fileTxt : file is not exit..."
+    }
+
+    return null
+
+}
+
+println "文件定位，使用当前工程的目录的build.gradle内容 : " + fileTxt('build.gradle')
+
+//拷贝
+copy {
+    //文件拷贝：当下工程的文件，拷贝到根工程
+    from file('111.gradle')
+    into getRootProject().getBuildDir()
+
+    //文件夹拷贝
+    from file('build/outputs/apk/debug')
+    into getRootProject().getBuildDir()
+
+    //条件拷贝，比如：拷贝文件夹内容，但是过滤掉某些文件不拷贝
+    from file('build/outputs/apk/release')
+
+    into getRootProject().getBuildDir()
+}
+
+//遍历
+fileTree('build/outputs/apk') { FileTree fileTree ->
+    fileTree.visit { FileVisitDetails details ->
+        println "fileTree 遍历文件名：" + details.name
+    }
+}
+
+/**
+ * （1）这里的文件操作，都是基于根工程的，不是相对于操作系统的目录
+ * （2）在根工程下，文件的便利性操作
+ * （3）如果需要跨工程，那么还需要用到上次讲groovy的时候的file操作
+ * */
+
+
+println "=====================================end fileApi======================================="
+
+
+println "=====================================start 依赖相关API======================================="
+
+
+
+
+buildscript { ScriptHandler scriptHandler ->
+
+
+    /**
+     * 依赖的两种情况：
+     * （1）gradle本身对第三方的依赖
+     * （2）应用程序的依赖
+     * */
+
+    //（1）
+    //配置工程的"插件地址"（如：第三方库）
+    //gradle本身对第三方的依赖
+    //和app模块的dependencies不一样，这个是应用程序的依赖，如：okhttp等
+    scriptHandler.dependencies {
+        //   classpath 'com.android.tools.build:gradle:3.5.0'
+    }
+
+    //（2）
+    //应用程序的依赖
+    // - 本地的依赖
+    // - 远程的依赖
+    // - 有源码的依赖
+    //具体见app的gradle的代码....（dependencies模块）  implementation
+
+    /**
+     *
+     * 总结表格：
+     ********************           **********************
+     * Android Studio 2.X	         Android Studio 3.X
+     * ******************           **********************
+     * apk	                            runtimeOnly
+     *
+     * provided	                        compileOnly
+     *
+     * compile	                            api
+     *
+     * 没有对应	                        implementation
+     *
+     * debugCompile	                    debugImplementation
+     *
+     * releaseCompile	                releaseImplementation
+     *
+     * androidTestCompile	            androidTestImplementation
+     *
+     *
+     * 这里只介绍常用的：
+     *
+     * （1）implementation
+     *  - 对外可见性
+     *  - 可以加快编译速度（减少不必要的重复编译过程）
+     * 例子：
+     *  工程依赖：
+     *      A 依赖 B
+     *      B 依赖 C
+     *  编译流程区别：
+     *      Android Studio 2.X使用compile：
+     *          A compile B
+     *          B compile C
+     *          A 不仅可以引用B，还可以引用C的接口和类
+     *
+     *      Android Studio 3.X使用implementation：
+     *          A implementation B
+     *          B implementation C
+     *          A 只可以引用B ，不可以引用C ，也就是C 对 A 是不可见的～
+     *
+     * （2）compile / api
+     *   依赖方式会传递所依赖的库
+     *   例子：
+     *      本地依赖了v4包
+     *      依赖的第三方库里面也依赖了v4包
+     *      两个v4版本不一致，出现：
+     *      All com.android.support libraries must use the exact same
+     *      version specification (mixing versions can lead to runtime crashes
+     *      问题
+     *
+     * （3）provided	/ compileOnly
+     *      只在编译时有效，不会参与打包
+     *      减少输出文件的大小
+     *      如：某个库只是编译的时候生产aar等，不需要打入到app里面
+     *      如：aap模块已经依赖了第三方网络库，然后app依赖的库b也要用到okhttp，可以用占位方式编译
+     *      可以在自己的moudle中使用该方式依赖一些比如com.android.support，gson这些使用者常用的库，避免冲突。
+     *
+     *
+     * */
+
+
+    /**
+     *
+     *    //配置工程的仓库地址
+     *  //市面上常用的仓库都可以支持
+     *
+     scriptHandler.repositories { RepositoryHandler handler ->
+
+     //maven 配置
+     handler.maven { MavenArtifactRepository repository ->
+     repository.name = '你的组织名称'
+     repository.url = 'maven的地址'
+     repository.credentials {username = 'username'
+     password = 'password'}}handler.ivy {}handler.google {}}*/
+
+}
+
+
+println "=====================================start 依赖相关API======================================="
+
+
+println "=====================================start 外部命令======================================="
+
+/**
+ * 操作系统级的命令（如跨工程/和本地系统目录交互等），就需要 project为我们提供的外部命令
+ * */
+task(name: 'daviCopy') {
+    println "daviCopy"
+
+    doLast {
+        println "==doLast=="
+        //doLast 为 Gradle 的执行阶段
+
+        def sourceF = this.buildDir.path + '/outputs/apk'
+        def desF = '/Users/yabber/Desktop/1111'//自己本地的目录
+        def cmd = "mv -f ${sourceF} ${desF}"
+        //命令基础模版
+        exec { ExecSpec execSpec ->
+            try {
+                //脚本类型
+                execSpec.setExecutable('bash')
+                //命令执行
+                execSpec.args('-c', cmd)
+            } catch (Exception e) {
+                e.printStackTrace()
+            }
+        }
+    }
+}
+
+
+println "=====================================end   外部命令======================================="
+
+
+
+
+
+
+

@@ -1,0 +1,78 @@
+/**
+ * Configuration配置阶段 之后
+ * */
+this.afterEvaluate {
+    studyProjectApi()
+
+    println "afterEvaluate：配置阶段 执行完毕>>>>"
+}
+
+/**
+ * gradle 执行完毕
+ * */
+this.gradle.buildFinished {
+    println "buildFinished：gradle 执行完毕>>>>>> "
+}
+
+
+/**
+ *
+ * Project API 学习
+ * */
+void studyProjectApi() {
+    println "-- studyProjectApi --"
+
+    //获得所有的project
+    this.getAllprojects().eachWithIndex { Project entry, int i ->
+        println "【getAllprojects().eachWithIndex-->】遍历所有的project name ： " + entry.name
+        println "【getAllprojects().eachWithIndex-->】遍历所有的project index ： " + i
+    }
+
+    //获得父project
+    if (this.getParent() == null) {
+        println "我是根project，所以我没有父project !!! "
+    } else {
+        println "获得父project : " + this.getParent().name
+    }
+
+    //获得根Project
+    println "根Project : " + this.getRootProject().name
+
+    //根Project管理子Project相关API
+    if (this.getParent() == null) {
+        println "我是根project !!! "
+
+        project('app', { Project p ->
+            println "根project中操作 : " + p.name
+            //这里其实进到了app中的gradle文件里面，可以自由的操作
+        })
+
+        project('lifecycle-plugin', { Project p ->
+            println "根project中操作 : " + p.name
+            //这里其实进到了app中的gradle文件里面，可以自由的操作
+        })
+    }
+
+    //当前结点project配置和所有子project的配置
+    allprojects {
+        println "【allprojects】当前结点project配置和所有子project的配置 --> " + project.name
+    }
+
+    //所有子project的配置(不包含当前的project)
+    subprojects {
+        println "【subprojects】所有子project的配置(不包含当前的project) --> " + project.name
+    }
+
+    //当前project是否存在xx插件
+    if (project.plugins.hasPlugin('com.android.application')) {
+        println "【project.plugins.hasPlugin】当前project存在 application插件.."
+    }
+
+    println "-- endProjectApi --"
+}
+
+/**
+ *
+ * 属性 API 学习
+ * */
+

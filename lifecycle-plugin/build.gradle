@@ -1,0 +1,45 @@
+apply plugin: 'groovy'
+apply plugin: 'maven'
+//apply from: '../projectApi.gradle'
+
+dependencies {
+    compile gradleApi()
+    compile localGroovy()
+}
+repositories {
+    mavenCentral()
+}
+repositories {
+    mavenCentral()
+}
+
+/**
+ * 生命周期：
+ *
+ * 1）Initialization初始化阶段
+ *
+ *      -> beforeEvaluate（最常监听）
+ * 2）Configuration配置阶段
+ *      -> afterEvaluate（最常监听）
+ *
+ *
+ * 3）Execution执行阶段
+ *      -> buildFinished
+ * */
+
+//发布到maven仓库，这里我们发布到本地仓库，../代表当前目录的父目录
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            //设置插件的GAV参数
+            pom.groupId = 'com.demo.plugin1'//你的包名
+            pom.artifactId = 'daviPlu'//这个随意起一个，发布后就是这个插件的名称
+            pom.version = '1.6.1'//版本号
+            //文件发布到下面目录
+            repository(url: uri('../repo'))
+        }
+    }
+}
+
+
+

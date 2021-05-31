@@ -1,0 +1,39 @@
+//todo 重要：只在根 project（即：DaviPlu） 中引用这个脚本
+//todo 根 project（即：DaviPlu）的子 project 有app，lifecycle-plugin
+
+
+
+
+//拓展属性方式1
+//为当前 project 的所有子project 定义属性
+//这里的特点是，所有的子project都有这个属性
+subprojects {
+    ext {
+        compileSdkVersion = 30
+        applicationId = "com.sq.mobile.daviplu"
+    }
+}
+
+
+//方式2，统一定义在根工程里面，然后子工程再去调用
+ext {
+    buildToolsVersion = "30.0.0"
+}
+
+
+//方式3，结合map方式拓展属性
+ext {
+    android = [
+            minSdkVersion: 15
+    ]
+
+    dependencies = [
+            appcompat: 'androidx.appcompat:appcompat:1.2.0'
+    ]
+}
+
+
+
+
+
+

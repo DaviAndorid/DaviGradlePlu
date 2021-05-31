@@ -1,0 +1,403 @@
+/**
+ * task的学习
+ * （1）定义
+ * （2）配置
+ * （3）
+ ** */
+
+//////////
+//定义
+/////////
+//（1）直接task函数创建法（有图...）
+task daviTask1 {
+    println '============start 定义================'
+    println '【task的定义】【直接task函数创建法】i am daviTask1'
+    println '============end 定义================'
+
+}
+//（2）TaskContainer 方式创建法（有图...）
+this.tasks.create(name: 'daviTask2') {
+    println '============start 定义======================='
+    println '【task的定义】【TaskContainer】i am daviTask2'
+    println '============end 定义========================='
+}
+
+/***
+ * 思考：
+ *  - 第一种，就是直接在 project 中定义task方式，最后其实都会被加到 project中的  tasks中
+ *      - tasks 是一个TaskContainer类，主要是用来管理project中的所有的task
+ *  - 第二中，利用task的管理类TaskContainer来管理（如：创建等，具体可以看TaskContainer的类里面的方法）
+ * */
+
+//////////
+//配置
+//////////
+//（1）定义的时候配置（有图..）
+task daviTask3(group: 'davi', description: 'davi 配置描述') {
+    println '============start 定义=========================================='
+    println '【task的配置】【定义的时候直接配置（key-valus模式）】i am daviTask3'
+    println '============end 定义============================================='
+
+}
+
+//（2）set方法配置（有图...）
+this.tasks.create(name: 'daviTask4') {
+    println '============start 定义======================='
+
+    setGroup('davi2')
+    setDescription('davi2 配置描述')
+
+    println '【task的配置】【set方法配置】i am daviTask4'
+    println '============end 定义========================='
+}
+
+/***
+ * 除了group，description 还有哪些配置？
+ * 打开源码如下：
+ * public interface Task extends Comparable<Task>, ExtensionAware {*
+ *     String TASK_NAME = "name";                           task的名称
+ *     String TASK_DESCRIPTION = "description";             task的描述
+ *     String TASK_GROUP = "group";                         分组
+ *     String TASK_TYPE = "type";                           类型（后面会仔细学习）
+ *     String TASK_DEPENDS_ON = "dependsOn";                当前task的依赖，如：依赖xxtask
+ *     String TASK_OVERWRITE = "overwrite";                 重写task
+ *     String TASK_ACTION = "action";                       配置执行的逻辑
+ *     String TASK_CONSTRUCTOR_ARGS = "constructorArgs";
+ *
+ * 当前先留个感性的了解先，后续详细学习
+ * */
+
+
+//////////
+//执行
+//////////
+
+/**
+ *
+ * 我们执行：./gradlew daviTask1
+ * 但是，可以看到其他task也执行了，如：daviTask2等
+ * 因为上面定义的task，都是在配置阶段执行打印的；
+ * 所有的代码，在配置阶段都会执行，所以..
+ *
+ * gradle生命周期有：
+ *  - Initialization初始化阶段
+ *  - Configuration配置阶段
+ *  - Execution执行阶段
+ *
+ * task在执行阶段怎么执行？
+ *
+ * Task闭包中直接编写的代码，会在配置阶段执行。
+ * 可以通过doFirst、doLast块将代码逻辑放到执行阶段中执行。
+ *
+ * 外部指定的 doFirst、doLast 会比内部指定的先执行。
+ *
+ * （有图...）
+ *
+ * 执行阶段的顺序：
+ * （1）doFirst
+ * （2）本身已经有的gradle的task的执行，如：build等
+ * （3）doLast
+ *
+ * */
+task daviTask5(group: 'davi', description: 'davi 配置描述') {
+    doFirst {
+        println '============start task在执行阶段=========================================='
+        println '【daviTask5】【task在执行阶段】【闭包中的...】i am daviTask5'
+        println '============end task在执行阶段============================================='
+    }
+
+    doLast {
+        println '============ 【daviTask5】doLast=========================================='
+    }
+}
+daviTask5.doFirst {
+    println '============start task在执行阶段=========================================='
+    println '【daviTask5】【task在执行阶段】【闭包外面的...】i am daviTask5， 先于闭包内的执行'
+    println '============end task在执行阶段============================================='
+}
+
+/*******************************
+ * 实战：task的小实战，统计【执行阶段】打包时长
+ *
+ ********************************
+ * */
+//时机选择配置之后，确保task的拓扑图已经完成了
+this.afterEvaluate { Project project ->
+    println '============start 统计【执行阶段】打包时长=========================================='
+
+    def startTime, endTime
+
+    //执行阶段的第一个task都是'preBuild'
+    def firstTask = project.tasks.getByName('preBuild')
+    firstTask.doFirst {
+        //记录第一个task执行之前的时间
+        startTime = System.currentTimeMillis()
+    }
+
+    //执行阶段最后一个task是'build'
+    def lastTask = project.tasks.getByName('build')
+    lastTask.doLast {
+        //记录最后一个task的执行之后的时间
+        endTime = System.currentTimeMillis()
+        //结果
+        println "统计【执行阶段】打包时长结果为：${endTime - startTime}"
+
+        println '============start 统计【执行阶段】打包时长=========================================='
+    }
+
+}
+
+/****
+ * dependsOn强依赖方式
+ * */
+task daviTask111(group: 'davi') {
+    doLast {
+        println "daviTask111 doLast 执行完了"
+    }
+}
+
+task daviTask222(group: 'davi') {
+    doLast {
+        println "daviTask222 doLast 执行完了"
+    }
+}
+
+//dependsOn 依赖
+task daviTask333(group: 'davi', dependsOn: [daviTask111, daviTask222]) {
+    doLast {
+        println "daviTask333 doLast 执行完了"
+    }
+}
+
+/**
+ * 模糊依赖方式
+ * */
+task aaa(group: 'davi') {
+    //aaa 都依赖以test开头的task
+    /** ？？？？没有生效 ？？？？？？
+     dependsOn this.tasks.findAll { Task t ->
+     return t.name.startsWith('test')}**/
+
+    doLast {
+        println "aaa doLast 执行完了"
+    }
+}
+
+task testbbb(group: 'davi') {
+    doLast {
+        println "testbbb doLast 执行完了"
+    }
+}
+
+task testccc(group: 'davi') {
+    doLast {
+        println "testccc doLast 执行完了"
+    }
+}
+
+/***
+ * 输入输出方式
+ * */
+//taskWriteApiFile ：
+//  - 指定了输入和输出，所以执行《taskTestInputAndOutPuts》第一次会执行；
+//  - 但是第二次后，由于输出和输出都没有变，所以不会执行（增量编译？）
+def taskApiFile
+task taskWriteApiFile(group: 'davi') { Task t ->
+    //定义
+    def vName = '1.0.0111'
+    taskApiFile = file('taskApiFile.xml')
+    if (!taskApiFile.exists()) {
+        println "【输入输出方式】 【taskWriteApiFile】文件不存在，创建.."
+        taskApiFile.createNewFile()
+    } else {
+        println "【输入输出方式】 【taskWriteApiFile】文件存在.."
+    }
+
+    //指定输入
+    t.getInputs().property('vName', vName)
+    //指定输出
+    t.getOutputs().file(taskApiFile)
+
+    //输出输出的执行使用
+    t.doLast {
+        println "【输入输出方式】 【taskWriteApiFile】输入的内容，保存到输出的文件中.."
+
+        //获取输入/输出
+        Map<String, Object> data = t.getInputs().getProperties()
+        File f = t.getOutputs().getFiles().singleFile
+
+        //输入的内容，保存到输出的文件中
+        StringWriter sw = new StringWriter()
+        sw.write(data.get('vName'))
+        f.withWriter { BufferedWriter writer ->
+            writer.append(sw.toString())
+        }
+    }
+}
+
+task taskReadApiFile(group: 'davi') { Task t ->
+    //输入是一个文件，也就是《taskWriteApiFile》中的输出
+    t.getInputs().file(taskApiFile)
+    t.doLast {
+        println "【输入输出方式】 【taskReadApiFile】输入是一个文件，也就是《taskWriteApiFile》中的输出"
+        println "【输入输出方式】 【taskReadApiFile】 文件内容打印：" + t.getInputs().getFiles().singleFile.text
+    }
+}
+
+task taskTestInputAndOutPuts(group: 'davi') { Task t ->
+    t.dependsOn(taskWriteApiFile, taskReadApiFile)
+}
+
+/**
+ * API 方式
+ * 要求：执行顺序为task666，task777，task888
+ * 有图>>>(mustRunAfter)
+ * */
+task task666(group: 'davi') { Task t ->
+    t.doLast {
+        println "task666"
+    }
+}
+
+task task777(group: 'davi') { Task t ->
+    t.mustRunAfter(task666)
+
+    t.doLast {
+        println "task777"
+    }
+}
+
+task task888(group: 'davi') { Task t ->
+    t.mustRunAfter(task777)
+
+    t.doLast {
+        println "task888"
+    }
+}
+
+task taskTest667788(group: 'davi') { Task t ->
+    t.dependsOn(task777, task888, task666)
+}
+
+/***
+ * 自定义的task，挂再到Gradle的build过程中
+ *
+ *
+ * Task :app:preBuild
+ * > Task :app:preDebugBuild
+ * > Task :app:compileDebugAidl NO-SOURCE
+ * > Task :app:checkDebugManifest UP-TO-DATE
+ * > Task :app:compileDebugRenderscript NO-SOURCE
+ * > Task :app:generateDebugBuildConfig UP-TO-DATE
+ * > Task :app:javaPreCompileDebug UP-TO-DATE
+ * > Task :app:mainApkListPersistenceDebug UP-TO-DATE
+ * > Task :app:generateDebugResValues UP-TO-DATE
+ * > Task :app:generateDebugResources UP-TO-DATE
+ * > Task :app:mergeDebugResources UP-TO-DATE
+ * > Task :app:createDebugCompatibleScreenManifests UP-TO-DATE
+ * > Task :app:processDebugManifest UP-TO-DATE
+ * > Task :app:processDebugResources UP-TO-DATE
+ * > Task :app:compileDebugJavaWithJavac UP-TO-DATE
+ * > Task :app:compileDebugSources UP-TO-DATE
+ * > Task :app:mergeDebugShaders UP-TO-DATE
+ * > Task :app:compileDebugShaders UP-TO-DATE
+ * > Task :app:generateDebugAssets UP-TO-DATE
+ * > Task :app:mergeDebugAssets UP-TO-DATE
+ * > Task :app:processDebugJavaRes NO-SOURCE
+ * > Task :app:mergeDebugJavaResource UP-TO-DATE
+ * > Task :app:checkDebugDuplicateClasses UP-TO-DATE
+ * > Task :app:transformClassesWithDexBuilderForDebug UP-TO-DATE
+ * > Task :app:validateSigningDebug UP-TO-DATE
+ * > Task :app:signingConfigWriterDebug UP-TO-DATE
+ * > Task :app:mergeDebugJniLibFolders UP-TO-DATE
+ * > Task :app:mergeExtDexDebug UP-TO-DATE
+ * > Task :app:mergeDexDebug UP-TO-DATE
+ * > Task :app:mergeDebugNativeLibs UP-TO-DATE
+ * > Task :app:stripDebugDebugSymbols UP-TO-DATE
+ * > Task :app:packageDebug UP-TO-DATE
+ * > Task :app:assembleDebug UP-TO-DATE
+ * > Task :app:preReleaseBuild
+ * > Task :app:compileReleaseAidl NO-SOURCE
+ * > Task :app:compileReleaseRenderscript NO-SOURCE
+ * > Task :app:checkReleaseManifest UP-TO-DATE
+ * > Task :app:generateReleaseBuildConfig UP-TO-DATE
+ * > Task :app:javaPreCompileRelease UP-TO-DATE
+ * > Task :app:mainApkListPersistenceRelease UP-TO-DATE
+ * > Task :app:generateReleaseResValues UP-TO-DATE
+ * > Task :app:generateReleaseResources UP-TO-DATE
+ * > Task :app:mergeReleaseResources UP-TO-DATE
+ * > Task :app:createReleaseCompatibleScreenManifests UP-TO-DATE
+ * > Task :app:processReleaseManifest UP-TO-DATE
+ * > Task :app:processReleaseResources UP-TO-DATE
+ * > Task :app:compileReleaseJavaWithJavac UP-TO-DATE
+ * > Task :app:compileReleaseSources UP-TO-DATE
+ * > Task :app:prepareLintJar UP-TO-DATE
+ * > Task :app:lintVitalRelease SKIPPED
+ * > Task :app:checkReleaseDuplicateClasses UP-TO-DATE
+ * > Task :app:transformClassesWithDexBuilderForRelease UP-TO-DATE
+ * > Task :app:mergeExtDexRelease UP-TO-DATE
+ * > Task :app:mergeDexRelease UP-TO-DATE
+ * > Task :app:mergeReleaseShaders UP-TO-DATE
+ * > Task :app:compileReleaseShaders UP-TO-DATE
+ * > Task :app:generateReleaseAssets UP-TO-DATE
+ * > Task :app:mergeReleaseAssets UP-TO-DATE
+ * > Task :app:processReleaseJavaRes NO-SOURCE
+ * > Task :app:mergeReleaseJavaResource UP-TO-DATE
+ * > Task :app:signingConfigWriterRelease UP-TO-DATE
+ * > Task :app:mergeReleaseJniLibFolders UP-TO-DATE
+ * > Task :app:mergeReleaseNativeLibs UP-TO-DATE
+ * > Task :app:stripReleaseDebugSymbols UP-TO-DATE
+ * > Task :app:packageRelease UP-TO-DATE
+ * > Task :app:assembleRelease UP-TO-DATE
+ * > Task :app:assemble UP-TO-DATE
+ * > Task :app:lint
+ * > Task :app:preDebugUnitTestBuild
+ * > Task :app:processDebugUnitTestJavaRes NO-SOURCE
+ * > Task :app:preReleaseUnitTestBuild
+ * > Task :app:processReleaseUnitTestJavaRes NO-SOURCE
+ * > Task :app:javaPreCompileDebugUnitTest UP-TO-DATE
+ * > Task :app:compileDebugUnitTestJavaWithJavac UP-TO-DATE
+ * > Task :app:testDebugUnitTest UP-TO-DATE
+ * > Task :app:javaPreCompileReleaseUnitTest UP-TO-DATE
+ * > Task :app:compileReleaseUnitTestJavaWithJavac UP-TO-DATE
+ * > Task :app:testReleaseUnitTest UP-TO-DATE
+ * > Task :app:test UP-TO-DATE
+ * > Task :app:check
+ *
+ * （build过程）学习链接：https://www.jianshu.com/p/f5f2af411229         （后面专门来..）
+ *
+ * 利用这个知识点，可以把我们的任务挂在到任何位置...
+ *
+ * */
+//实现：preBuild 任务之前，执行我们自己定义的task
+//配置完毕，task的拓扑图已经生成（有图...）
+task taskBeforePreBuild(group: 'davi') { Task t ->
+    println "配置阶段：【taskAfterPreBuild】"
+    doLast {
+        println "执行阶段：【taskAfterPreBuild】"
+    }
+}
+
+
+this.project.afterEvaluate { Project p ->
+    println "配置阶段完成后.."
+
+    def preBuild = p.tasks.getByName('preBuild')
+    preBuild.dependsOn(taskBeforePreBuild)
+}
+
+
+/**
+ * task的类型
+ * 自己官网看API：https://docs.gradle.org/current/samples/index.html#android
+ * */
+
+
+
+
+
+
+
+
+
+
