@@ -1,0 +1,18 @@
+/***
+ * gradle在安卓中的拓展学习
+ * */
+
+this.afterEvaluate {
+    this.android.applicationVariants.each { variant ->
+        println '【applicationVariants】name is : ' + variant.name
+        println '【applicationVariants】baseName is : ' + variant.baseName
+    }
+}
+
+
+
+
+
+
+
+

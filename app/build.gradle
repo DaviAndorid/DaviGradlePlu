@@ -1,25 +1,21 @@
 apply plugin: 'com.android.application'
 
 
+
 android {
     //第一种方式，父Project里面，为子Project定义了
     compileSdkVersion this.compileSdkVersion
-
     //第二种方式，直接定义在根Project
     //buildToolsVersion this.rootProject.buildToolsVersion
     buildToolsVersion this.buildToolsVersion
-
     defaultConfig {
         //第二种方式，直接定义在根Project
         //知识点：根project的所有属性会被子project继承
         applicationId this.applicationId
-
         //第三种方式
         minSdkVersion this.rootProject.ext.android.minSdkVersion
-
         //模式2-简单的那种
         targetSdkVersion mTargetSdkVersion
-
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -36,23 +32,19 @@ android {
 dependencies {
     //（1）本地的依赖
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-
     //（2）远程的依赖
     implementation('androidx.constraintlayout:constraintlayout:2.0.4') {
         //依赖排除
         //app模块本身依赖了v4，constraintlayout 也依赖了，这个意思是排除constraintlayout依赖的v4，避免冲突这样
         exclude module: 'support-v4'
         //exclude(group: "support-v4")
-
         //constraintlayout引用了第三方库，如果当前project里面需要用到【constraintlayout引用了第三方库】的方法，
         // 那么设置为true，否则设置为false
         //false：禁止传递依赖
         transitive false
         //默认的传递依赖就是false
         //因为，假如存在a-b-c依赖关系，b哪一天改了，把依赖c的版本升级了（废弃了些api），a用了c的方法等，就会出现a以前调用c方法不见了导致报错
-
     }
-
     //第三种方式
     implementation this.rootProject.ext.dependencies.appcompat
     testImplementation 'junit:junit:4.12'
@@ -62,7 +54,7 @@ dependencies {
 
 //【自定义插件】
 //com.demo.plugin 为resources/META-INF/gradle-plugins下的《properties文件名称》
-//apply plugin: 'com.demo.plugin'
+apply plugin: 'com.demo.plugin'
 
 //########################################################
 apply plugin: 'com.davi.pkg'
@@ -79,8 +71,8 @@ pluConfig {//todo ??? 不生效 ？？
 //apply from: '../projectApi.gradle'
 //apply from: '../fileApi.gradle'
 //apply from: '../taskApi.gradle'
-apply from: '../pluApi.gradle'
-
+//apply from: '../pluApi.gradle'
+apply from: '../extensionsGradle.gradle'
 
 buildscript {
     repositories {
@@ -96,3 +88,5 @@ buildscript {
         classpath 'com.davi.pkg:dp:1.1.7'
     }
 }
+
+
