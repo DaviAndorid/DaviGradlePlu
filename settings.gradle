@@ -1,5 +1,6 @@
 /**
  * 模式2-定义属性
+ * isLoadApp 在 《gradle.properties》文件中定义
  * */
 if (isLoadApp) {
     include ':app', ':davi-plu'

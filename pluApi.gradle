@@ -9,7 +9,6 @@
 android {
     sourceSets {
         main {
-            //【改变so存放位置】默认情况，so存放在app/src/main/jniLibs中，现在改为app/libs下
             jniLibs.srcDirs = ['libs']
         }
     }
@@ -18,7 +17,6 @@ android {
 android {
     sourceSets {
         main {
-            //资源分模块（有图....）
             res.srcDirs = ['src/main/res', 'src/main/res-davi']
         }
     }
