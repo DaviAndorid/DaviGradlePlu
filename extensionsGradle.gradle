@@ -72,6 +72,12 @@ this.afterEvaluate {
      *
      *
      * */
+
+
+}
+
+
+this.afterEvaluate {
     //有图.....
     this.android.applicationVariants.each { variant ->
         //debug || release
@@ -92,7 +98,9 @@ this.afterEvaluate {
             println '【applicationVariants】output name : ' + output.name
         }
     }
+}
 
+this.afterEvaluate {
     //有图....
     this.android.applicationVariants.each { variant ->
         //debug || release
@@ -107,10 +115,6 @@ this.afterEvaluate {
         }
     }
 }
-
-
-
-
 
 
 

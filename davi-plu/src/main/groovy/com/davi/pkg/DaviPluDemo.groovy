@@ -27,6 +27,19 @@ public class DaviPluDemo implements Plugin<Project> {
 
     void onTask(Project project) {
         /**
+         * 自定义task的执行
+         * 创建了一个名为 name-davi 的任务，然后映射到我们自定义的任务的类 DaviTaskPlu。
+         * */
+        project.getTasks().create("name-davi", DaviTaskPlu.class, new Action<DaviTaskPlu>() {
+            @Override
+            void execute(DaviTaskPlu t) {
+                t.onAction()
+            }
+        })
+    }
+
+    void onExtensions(Project project) {
+        /**
          * 【定义】自定义插件传参数
          * 1）创建一个名为 pluConfig 的Extension，数据结构为《ConfigBean》
          *
@@ -43,17 +56,7 @@ public class DaviPluDemo implements Plugin<Project> {
          *
          * */
         project.extensions.create(NAME_PLU_CONFIG, ConfigBean)
-
-        /**
-         * 自定义task的执行
-         * 创建了一个名为 name-davi 的任务，然后映射到我们自定义的任务的类 DaviTaskPlu。
-         * */
-        project.getTasks().create("name-davi", DaviTaskPlu.class, new Action<DaviTaskPlu>() {
-            @Override
-            void execute(DaviTaskPlu t) {
-                t.onAction()
-            }
-        })
     }
+
 
 }
