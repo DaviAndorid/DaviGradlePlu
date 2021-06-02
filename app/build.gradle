@@ -68,10 +68,10 @@ pluConfig {//todo ??? 不生效 ？？
 //#########################################################
 
 
-//apply from: '../projectApi.gradle'
-//apply from: '../fileApi.gradle'
-//apply from: '../taskApi.gradle'
-//apply from: '../pluApi.gradle'
+apply from: '../projectApi.gradle'
+apply from: '../fileApi.gradle'
+apply from: '../taskApi.gradle'
+apply from: '../pluApi.gradle'
 apply from: '../extensionsGradle.gradle'
 
 buildscript {
