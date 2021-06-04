@@ -1,0 +1,23 @@
+// Register  extension
+extensions.create('daviPublish', JavaLibraryPublishExtension.class, project)
+
+
+class JavaLibraryPublishExtension {
+
+    private final Project project
+
+    JavaLibraryPublishExtension(Project p) {
+        project = p
+
+        //执行阶段 publish
+        proj.afterEvaluate {
+            this.publish()
+        }
+    }
+
+
+    protected void publish() {
+
+    }
+
+}

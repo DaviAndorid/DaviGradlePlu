@@ -1,0 +1,33 @@
+apply plugin: 'java-library'
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+}
+
+sourceCompatibility = "7"
+targetCompatibility = "7"
+
+
+def GROUP_NAME = 'DaviJavaLib'
+
+
+/**
+ * 把当前java工程生成的jar，拷贝输出到指定目录（buildSdk/android）
+ *
+ * 跑这个任务的时候，会依赖build，所以先会执行build，在执行这个task
+ * */
+task buildDaviJavaLib(type: Copy, dependsOn: [build], group: "${GROUP_NAME}") {
+    println '============ buildDaviJavaLib start =============='
+
+    from('build/libs') {
+        //包含
+        include '*.jar'
+        //排除
+        exclude '*javadoc.jar'
+        exclude '*-sources.jar'
+    }
+    into(rootProject.file("buildSdk/android"))
+
+    println '============ buildDaviJavaLib end =============='
+}
+

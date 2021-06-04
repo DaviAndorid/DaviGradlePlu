@@ -1,0 +1,63 @@
+apply plugin: 'java'
+apply plugin: 'maven-publish'
+
+group = 'cn.davi.plu'
+version = '1.0'
+
+
+//学习地址： https://taccisum.github.io/learn_gradle_5.html
+
+/***
+ * 发布到本地
+ * */
+publishing {
+    //要发布的内容(可配置多个)
+    publications {
+        //mavenJava只是一个命名，并无特殊含义（也可以将其更换为别的名称，但不能与其它发布组件名称重复）
+        //mavenJava{}被称为发布组件Component，用于配置一项要发布的内容
+        mavenJava(MavenPublication) {
+            //将当前java项目作为发布内容
+            from components.java
+        }
+    }
+
+    //目标仓库(可配置多个)
+    repositories {
+        //要发布的目标仓库
+        maven {
+            //当前项目的build目录下的repo目录
+            url "$buildDir/repo"
+
+            //账号密码
+            credentials {
+                username = "davi"
+                password = "davi111"
+            }
+        }
+    }
+}
+
+
+/***
+ *发布源码
+ * */
+//新增一个用于获取源码的task
+task sourceJar(type: Jar) {
+    from sourceSets.main.allJava
+}
+
+publishing {
+    //....
+
+    //目标仓库(可配置多个)
+    publications {
+        mavenJava(MavenPublication) {
+            //配置额外发布的artifact
+            artifact sourceJar {
+                //这个字符串会作为artifact文件的后缀
+                classifier "sources"
+            }
+        }
+    }
+}
+
