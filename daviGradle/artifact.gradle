@@ -1,0 +1,80 @@
+def GROUP_NAME = 'daviArtifact'
+
+/***
+ * 【方式1】使用 archives 方式上传
+ * 就会将 jarTask 生成的 jar 文件，上传到对应仓库目录下
+ * */
+/*
+task jarTask(type: Jar, group: "${GROUP_NAME}") {
+    doLast {
+        println "jarTask 生成的 jar 文件 >>> "
+    }
+}
+artifacts {
+    // 将 jarTask 看作 artifact，交给 gdArchives 管理
+    archives jarTask
+}
+uploadArchives {
+    repositories {
+        // 上传到本地 maven 仓库
+        maven {
+            // 会在项目根目录生成文件夹
+            url "file:daviRepoMaven"
+        }
+    }
+}*/
+
+/***
+ * 【方式2】使用 maven 插件
+ * */
+/*
+def PLU_MAVEN = true
+if (PLU_MAVEN) {
+    apply plugin: 'maven'
+
+    uploadArchives {
+        repositories {
+            // maven 插件提供的 mavenDeployer
+            mavenDeployer {
+                // 会在项目根目录生成文件夹
+                def url = 'file:myRepoMavenmavenDeployer'
+                repository(url: url)
+            }
+        }
+    }
+}*/
+
+/**
+ * 使用 maven-publish 插件
+ * （1）maven 插件是较原始的 artifact 发布方式
+ * （2）maven-publish 插件是更新的，也是 Gradle 更提倡的 artifact 发布方式
+ *      - maven-publish 定义了发布的 what、where、how。
+ * */
+
+apply plugin: 'maven-publish'
+
+publishing {
+    // 定义要发布的东西，what
+    publications {
+        daviLibrary(MavenPublication) {
+            from components.java
+        }
+    }
+
+    // 定义要发布的地点，where
+    repositories {
+        maven {
+            name 'daviRepo'
+            url "file:daviRepoMaven-Plu"
+        }
+    }
+
+    // how
+    // publications 和 repositories 会组成相应的 task
+    // publish「PubName」PublicationTo「RepoName」Repository：
+    // publish「MyLibrary」PublicationTo「MyRepo」Repository
+}
+
+
+
+

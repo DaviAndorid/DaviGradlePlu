@@ -17,6 +17,26 @@ class JavaLibraryPublishExtension {
 
 
     protected void publish() {
+        //强校验
+        //因为这个功能是基于'maven-publish'的通用设计
+        if (!project.plugins.hasPlugin('maven-publish')) {
+            project.plugins.apply('maven-publish')
+        }
+
+        emitPublicationDSL(project)
+
+        emitRepositoryDSL(project)
+    }
+
+    private void emitRepositoryDSL(Project project) {
+
+    }
+
+    /**
+     * 要发布的内容准备(如：java源码/javaDoc等)
+     *
+     * */
+    protected void emitPublicationDSL(Project project) {
 
     }
 

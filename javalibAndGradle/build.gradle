@@ -4,9 +4,6 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 }
 
-sourceCompatibility = "7"
-targetCompatibility = "7"
-
 
 def GROUP_NAME = 'DaviJavaLib'
 
@@ -31,3 +28,6 @@ task buildDaviJavaLib(type: Copy, dependsOn: [build], group: "${GROUP_NAME}") {
     println '============ buildDaviJavaLib end =============='
 }
 
+
+
+//apply from: '../daviGradle/artifact.gradle'
