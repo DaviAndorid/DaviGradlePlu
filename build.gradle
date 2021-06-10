@@ -34,3 +34,9 @@ task clean(type: Delete) {
 }
 
 
+ext {
+    VERSION_NAME = '1.0.666'
+    GROUP = 'com.davi.mavenPlu'
+    // 会在项目根目录生成文件夹
+    POM_URL = 'file:daviRepoMaven666'
+}

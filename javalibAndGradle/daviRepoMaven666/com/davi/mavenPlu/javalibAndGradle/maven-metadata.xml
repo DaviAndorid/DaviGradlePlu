@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metadata>
-  <groupId>DaviPlu</groupId>
+  <groupId>com.davi.mavenPlu</groupId>
   <artifactId>javalibAndGradle</artifactId>
   <versioning>
-    <release>unspecified</release>
+    <release>1.0.666</release>
     <versions>
-      <version>unspecified</version>
+      <version>1.0.666</version>
     </versions>
-    <lastUpdated>20210608003825</lastUpdated>
+    <lastUpdated>20210610022108</lastUpdated>
   </versioning>
 </metadata>

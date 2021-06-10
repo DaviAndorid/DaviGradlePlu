@@ -11,7 +11,7 @@ task jarTask(type: Jar, group: "${GROUP_NAME}") {
     }
 }
 artifacts {
-    // 将 jarTask 看作 artifact，交给 gdArchives 管理
+    // 将 jarTask 看作 artifact，交给 archives 管理
     archives jarTask
 }
 uploadArchives {

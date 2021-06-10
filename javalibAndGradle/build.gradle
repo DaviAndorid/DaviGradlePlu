@@ -4,15 +4,12 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 }
 
-
-def GROUP_NAME = 'DaviJavaLib'
-
-
 /**
  * 把当前java工程生成的jar，拷贝输出到指定目录（buildSdk/android）
  *
  * 跑这个任务的时候，会依赖build，所以先会执行build，在执行这个task
  * */
+/*def GROUP_NAME = 'DaviJavaLib'
 task buildDaviJavaLib(type: Copy, dependsOn: [build], group: "${GROUP_NAME}") {
     println '============ buildDaviJavaLib start =============='
 
@@ -26,8 +23,55 @@ task buildDaviJavaLib(type: Copy, dependsOn: [build], group: "${GROUP_NAME}") {
     into(rootProject.file("buildSdk/android"))
 
     println '============ buildDaviJavaLib end =============='
+}*/
+
+
+//apply from: '../daviGradle/artifact.gradle'
+
+/**
+ * maven实战
+ * */
+//初始化变量
+group rootProject.ext.GROUP
+version rootProject.ext.VERSION_NAME
+
+//确认配置是否存在
+//这里每个项目里面的《gradle.properties》都定义了：POM_NAME/POM_DESCRIPTION等参数
+def checkAndGetOption(name) {
+    if (!project.hasProperty(name)) {
+        throw new GradleException("Please specify '$name' option in gradle project properties.")
+    }
+    return project[name]
+}
+
+//插件使用
+apply from: rootProject.file('daviGradle/DaviPublish.gradle')
+daviPublish {
+    //要发布的内容
+    /*
+    project.publishing.publications {
+        "${publicationName}"(MavenPublication) {
+            //...
+        }
+    }*/
+    pom {
+        //....
+    }
+
+
+    /*project.publishing.repositories {
+        maven {
+            //...
+        }
+    }*/
+    //要发布的地址
+    publishToMaven {
+        //...
+        url checkAndGetOption('POM_URL')
+    }
 }
 
 
 
-//apply from: '../daviGradle/artifact.gradle'
+
+

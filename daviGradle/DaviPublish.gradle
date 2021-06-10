@@ -1,16 +1,25 @@
 // Register  extension
 extensions.create('daviPublish', JavaLibraryPublishExtension.class, project)
+//ext.artifactId = name
 
-
+/**
+ *
+ * 基于《maven-publish》方式的上传java工程的jar
+ *
+ * */
 class JavaLibraryPublishExtension {
 
     private final Project project
+
+    protected final ArrayList<Closure> pomClosures = []
+
+    private final ArrayList<Closure> mavenPublishClosures = []
 
     JavaLibraryPublishExtension(Project p) {
         project = p
 
         //执行阶段 publish
-        proj.afterEvaluate {
+        p.afterEvaluate {
             this.publish()
         }
     }
@@ -28,16 +37,100 @@ class JavaLibraryPublishExtension {
         emitRepositoryDSL(project)
     }
 
-    private void emitRepositoryDSL(Project project) {
+    /**
+     * 要发布的内容准备(如：java源码/javaDoc等)
+     * */
+    protected void emitPublicationDSL(Project project) {
+        /***
+         * 获取源码的task
+         * */
+        def sourcesJarTask = project.task('sourcesJar', type: Jar) {
+            classifier = 'sources'
+            //project.sourceSets.main 中的代码的位置目录保存起来，输出到 srcDirs = []
+            def srcDirs = []
+            def sources = project.sourceSets.main
+            ['java', 'groovy', 'scala', 'kotlin'].each {
+                if (sources.hasProperty(it)) {
+                    println "获取源码的task : project.sourceSets.main has ${it}"
+                    srcDirs << sources[it].srcDirs
+                }
+            }
+            from srcDirs
+        }
 
+
+        /***
+         * maven 要发布的内容(可配置多个)
+         *
+         * 发布：sourcesJarTask的源码
+         * */
+        project.publishing.publications {
+            //${publicationName}，称为发布组件Component，用于配置一项要发布的内容
+            //只是一个命名，并无特殊含义（也可以将其更换为别的名称，但不能与其它发布组件名称重复）
+            "${publicationName}"(MavenPublication) {
+                from project.components.java
+                groupId this.groupId
+                version this.version
+                //将 sourcesJarTask 看作 artifact，交给 archives 管理
+                //artifact sourcesJarTask
+            }
+        }
+
+        /**
+         * maven 要发布的内容(可配置多个)
+         * 外部传进来的pom
+         * */
+        pomClosures.each { cl ->
+            //要发布的内容(可配置多个)
+            project.publishing.publications {
+                "${publicationName}"(MavenPublication) {
+                    // 闭包存到 pomClosures数组
+                    pom cl
+                }
+            }
+        }
     }
 
     /**
-     * 要发布的内容准备(如：java源码/javaDoc等)
-     *
+     * 要发布的地点
      * */
-    protected void emitPublicationDSL(Project project) {
+    private void emitRepositoryDSL(Project project) {
+        mavenPublishClosures.each { cl ->
+            project.publishing.repositories {
+                maven {
+                    cl.delegate = delegate
+                    cl()
+                }
+            }
+        }
+    }
 
+    String getGroupId() {
+        return project.group
+    }
+
+    String getVersion() {
+        return project.version
+    }
+
+    final protected String getPublicationName() {
+        return project.name
+    }
+
+    /***
+     * 自定义拓展属性 pom
+     * */
+    void pom(Closure cl) {
+        if (cl != null)
+            pomClosures << cl
+    }
+
+    /***
+     * 自定义拓展属性 publishToMaven
+     * */
+    void publishToMaven(Closure cl) {
+        if (cl != null)
+            mavenPublishClosures << cl
     }
 
 }
