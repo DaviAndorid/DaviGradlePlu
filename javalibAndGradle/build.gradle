@@ -32,8 +32,8 @@ task buildDaviJavaLib(type: Copy, dependsOn: [build], group: "${GROUP_NAME}") {
  * maven实战
  * */
 //初始化变量
-group rootProject.ext.GROUP
-version rootProject.ext.VERSION_NAME
+group checkAndGetOption('GROUP')
+version checkAndGetOption('VERSION_NAME')
 
 //确认配置是否存在
 //这里每个项目里面的《gradle.properties》都定义了：POM_NAME/POM_DESCRIPTION等参数
@@ -48,22 +48,9 @@ def checkAndGetOption(name) {
 apply from: rootProject.file('daviGradle/DaviPublish.gradle')
 daviPublish {
     //要发布的内容
-    /*
-    project.publishing.publications {
-        "${publicationName}"(MavenPublication) {
-            //...
-        }
-    }*/
     pom {
         //....
     }
-
-
-    /*project.publishing.repositories {
-        maven {
-            //...
-        }
-    }*/
     //要发布的地址
     publishToMaven {
         //...
