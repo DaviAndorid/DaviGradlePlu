@@ -1,7 +1,6 @@
 apply plugin: 'com.android.application'
 
 
-
 android {
     //第一种方式，父Project里面，为子Project定义了
     compileSdkVersion this.compileSdkVersion
@@ -21,8 +20,12 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
+        debug {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -74,6 +77,23 @@ apply plugin: 'com.davi.pkg'
 apply from: '../pluApi.gradle'
 apply from: '../extensionsGradle.gradle'
 
+
+//###################################
+//com.davi.tinker.patch.gradle.plugin
+//###################################
+apply plugin: 'com.davi.tinker.patch'
+tinkerPatch {
+    buildConfig {
+        tinkerId = getTinkerIdValue()
+    }
+}
+
+def getTinkerIdValue() {
+    return hasProperty("TINKER_ID") ? TINKER_ID : "123456789"
+}
+// gitSha
+// ERROR: Gradle DSL method not found: 'gitSha()'
+
 buildscript {
     repositories {
         maven {
@@ -85,8 +105,15 @@ buildscript {
     dependencies {
         //格式为 groupId : artifactId : version
         classpath 'com.demo.plugin1:daviPlu:1.6.1'
-        classpath 'com.davi.pkg:dp:1.2.0'
+        classpath 'com.davi.pkg:dp:1.2.3'
+        classpath 'com.davi.tinker.patch.gradle.plugin:davi-tinker-patch-gradle-plugin:1.2.4'
     }
 }
+
+
+
+
+
+
 
 

@@ -94,8 +94,14 @@ this.afterEvaluate {
             //ktplay_android_sdk_CN_v4/DaviPlu/app/build/outputs/apk/debug/app-debug.apk
             //ktplay_android_sdk_CN_v4/DaviPlu/app/build/outputs/apk/release/app-release-unsigned.apk
             File outputFile = output.outputFile
-            println '【applicationVariants】【output.outputFile】 path : ' + outputFile.path
+
+            //output
+            println '【applicationVariants】output dirName : ' + output.dirName
             println '【applicationVariants】output name : ' + output.name
+
+            //path
+            println '【applicationVariants】【output.outputFile】 path : ' + outputFile.path
+
         }
     }
 }

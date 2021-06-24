@@ -1,28 +1,4 @@
-def GROUP_NAME = 'daviArtifact'
 
-/***
- * 【方式1】使用 archives 方式上传
- * 就会将 jarTask 生成的 jar 文件，上传到对应仓库目录下
- * */
-/*
-task jarTask(type: Jar, group: "${GROUP_NAME}") {
-    doLast {
-        println "jarTask 生成的 jar 文件 >>> "
-    }
-}
-artifacts {
-    // 将 jarTask 看作 artifact，交给 archives 管理
-    archives jarTask
-}
-uploadArchives {
-    repositories {
-        // 上传到本地 maven 仓库
-        maven {
-            // 会在项目根目录生成文件夹
-            url "file:daviRepoMaven"
-        }
-    }
-}*/
 
 /***
  * 【方式2】使用 maven 插件
@@ -45,7 +21,9 @@ if (PLU_MAVEN) {
 }*/
 
 /**
+ * ***********************
  * 使用 maven-publish 插件
+ * ***********************
  * （1）maven 插件是较原始的 artifact 发布方式
  * （2）maven-publish 插件是更新的，也是 Gradle 更提倡的 artifact 发布方式
  *      - maven-publish 定义了发布的 what、where、how。
@@ -53,6 +31,9 @@ if (PLU_MAVEN) {
 
 apply plugin: 'maven-publish'
 
+//【1】Publishing a Software Component
+
+/*
 publishing {
     // 定义要发布的东西，what
     publications {
@@ -70,10 +51,197 @@ publishing {
     }
 
     // how
-    // publications 和 repositories 会组成相应的 task
-    // publish「PubName」PublicationTo「RepoName」Repository：
-    // publish「MyLibrary」PublicationTo「MyRepo」Repository
+         // publications 和 repositories 会组成相应的 task
+         // publish「PubName」PublicationTo「RepoName」Repository：
+         // publish「MyLibrary」PublicationTo「MyRepo」Repository
+}*/
+
+
+//【2】Publishing custom artifacts
+//Adding additional artifact to a MavenPublication
+//发布源码
+/*task sourceJar(type: Jar) {
+    from sourceSets.main.allJava
 }
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+
+            artifact sourceJar {
+                classifier "sources"
+            }
+        }
+    }
+
+    // 定义要发布的地点，where
+    repositories {
+        maven {
+            name 'daviRepo'
+            url "file:daviRepoMaven-customArtifacts"
+        }
+    }
+}*/
+
+
+//【3】Identity values in the generated POM
+/*
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId 'org.gradle.sample'
+            artifactId 'project1-sample'
+            version '1.1'
+
+            from components.java
+        }
+    }
+
+    // 定义要发布的地点，where
+    repositories {
+        maven {
+            name 'daviRepo'
+            url "file:daviRepoMaven-IdentityValues"
+        }
+    }
+}*/
+
+//【4】 Modifying the generated POM
+/*publishing {
+    publications {
+        mavenCustom(MavenPublication) {
+            //要发布的内容
+            from components.java
+
+            //  Modifying the generated POM
+            pom.withXml {
+                asNode().appendNode('description',
+                        'A demonstration of maven POM customization ！！！！davi！！！！！')
+            }
+        }
+    }
+
+    // 定义要发布的地点，where
+    repositories {
+        maven {
+            name 'daviRepo'
+            url "file:daviRepoMaven-Modifying-the-generated-POM"
+        }
+    }
+}*/
+
+//【5】Publishing multiple modules
+/*task apiJar(type: Jar) {
+    baseName "publishing-api"
+    from sourceSets.main.output
+}
+
+publishing {
+    //要发布的内容
+    publications {
+        impl(MavenPublication) {
+            groupId 'org.gradle.sample.impl'
+            artifactId 'project2-impl'
+            version '2.3'
+
+            from components.java
+        }
+        api(MavenPublication) {
+            groupId 'org.gradle.sample'
+            artifactId 'project2-api'
+            version '2'
+
+            artifact apiJar
+        }
+    }
+
+    //要发布的地址
+    repositories {
+        maven {
+            name 'daviRepo'
+            url "file:daviRepoMaven-multiple-modules"
+        }
+    }
+}*/
+
+
+//【6】Repositories
+/*publishing {
+    //要发布的内容
+    publications {
+        componentsDavi(MavenPublication) {
+            groupId 'org.gradle.sample.11'
+            artifactId 'project2-impl11'
+            version '2.3'
+
+            from components.java
+        }
+    }
+
+    //要发布的地址
+    repositories {
+        maven {
+            name 'daviRepo'
+            url "$buildDir/repo-davi"
+        }
+    }
+}*/
+
+
+/****
+ ************************
+ * Publishing artifacts
+ ************************
+ *
+ * 地址：http://sorcersoft.org/project/site/gradle/userguide/artifact_management.html
+ *
+ * */
+
+//【1】Defining an artifact using an archive task
+task myJar(type: Jar) {
+
+}
+
+artifacts {
+    archives myJar
+}
+
+//【2】Defining an artifact using a file
+def someFile = file('build/output.json')
+
+artifacts {
+    archives someFile
+}
+
+
+//【3】Customizing an artifact
+//知识点：https://www.jianshu.com/p/cd1a78dc8346
+
+
+//【4】使用 archives 方式上传
+/*
+def GROUP_NAME = 'daviArtifact'
+
+task jarTask(type: Jar, group: "${GROUP_NAME}") {
+    doLast {
+        println "jarTask 生成的 jar 文件 >>> "
+    }
+}
+artifacts {
+    // 将 jarTask 看作 artifact，交给 archives 管理
+    archives jarTask
+}
+uploadArchives {
+    repositories {
+        // 上传到本地 maven 仓库
+        maven {
+            // 会在项目根目录生成文件夹
+            url "file:daviRepoMaven"
+        }
+    }
+}*/
+
 
 
 

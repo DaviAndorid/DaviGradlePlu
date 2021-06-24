@@ -6,6 +6,10 @@ apply plugin: 'maven'
 //引入gradle的API代码
 dependencies {
     implementation gradleApi()
+    //implementation localGroovy()
+
+    //解决 ApkVariant 没有提示的问题
+    compileOnly 'com.android.tools.build:gradle:3.1.4'
 }
 sourceSets {
     main {
@@ -29,7 +33,7 @@ uploadArchives {
             //设置插件的GAV参数
             pom.groupId = 'com.davi.pkg'//你的包名
             pom.artifactId = 'dp'//这个随意起一个，发布后就是这个插件的名称
-            pom.version = '1.2.0'//版本号
+            pom.version = '1.2.3'//版本号
             //文件发布到下面目录8
             repository(url: uri('../repo'))
         }

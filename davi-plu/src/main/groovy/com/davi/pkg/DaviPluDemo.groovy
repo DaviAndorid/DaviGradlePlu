@@ -1,11 +1,11 @@
 package com.davi.pkg
 
+import com.android.build.gradle.api.ApkVariant
 import com.davi.pkg.bean.ConfigBean
 import com.davi.pkg.task.DaviTaskPlu
 import org.gradle.api.Action
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.plugins.ExtensionContainer
 
 /**
  * gradle 插件，类似gradle文件里面写一样的
@@ -21,9 +21,34 @@ public class DaviPluDemo implements Plugin<Project> {
     @Override
     void apply(Project project) {
         println '【DaviPluDemo】-- apply start-- ' + project.name
-        onTask(project)
+        testManifestTask(project)
         println '【DaviPluDemo】-- apply end-- ' + project.name
     }
+
+
+    static void testManifestTask(Project project) {
+        project.afterEvaluate {
+            def android = project.extensions.android
+            android.applicationVariants.all { ApkVariant variant ->
+                /**
+                 * 【variant.name】
+                 *       (1)debug
+                 *       (2)release
+                 *
+                 * 【getProcessManifestTask】
+                 *      (1)processDebugManifest
+                 *      (2)processReleaseManifest
+                 * */
+                def agpProcessManifestTask = Compatibilities.getProcessManifestTask(project, variant)
+
+                variant.outputs.each { variantOutput ->
+                    File manifestPath = Compatibilities.getOutputManifestPath(project, agpProcessManifestTask, variantOutput)
+                    println '【testManifestTask】manifestPath：' + manifestPath.getPath()
+                }
+            }
+        }
+    }
+
 
     void onTask(Project project) {
         /**

@@ -1,0 +1,35 @@
+apply plugin: 'groovy'
+
+dependencies {
+    implementation gradleApi()
+    implementation localGroovy()
+    compileOnly 'com.android.tools.build:gradle:3.1.4'
+}
+
+sourceSets {
+    main {
+        groovy {
+            srcDir 'src/main/groovy'
+        }
+
+        resources {
+            srcDir 'src/main/resources'
+        }
+    }
+}
+
+group 'com.davi.tinker.patch.gradle.plugin'
+version '1.2.4'
+//插件使用
+apply from: rootProject.file('daviGradle/DaviPublish.gradle')
+daviPublish {
+    //要发布的内容
+    pom {
+        //....
+    }
+    //要发布的地址
+    publishToMaven {
+        //...
+        url '../repo'
+    }
+}
