@@ -57,10 +57,10 @@ dependencies {
 
 //【自定义插件】
 //com.demo.plugin 为resources/META-INF/gradle-plugins下的《properties文件名称》
-apply plugin: 'com.demo.plugin'
+//apply plugin: 'com.demo.plugin'
 
 //########################################################
-apply plugin: 'com.davi.pkg'
+//apply plugin: 'com.davi.pkg'
 /**
  * 自定义拓展（插件传参数），传递到插件里面的task中使用
  * 2）配置Extension
@@ -74,8 +74,8 @@ apply plugin: 'com.davi.pkg'
 //apply from: '../projectApi.gradle'
 //apply from: '../fileApi.gradle'
 //apply from: '../taskApi.gradle'
-apply from: '../pluApi.gradle'
-apply from: '../extensionsGradle.gradle'
+//apply from: '../pluApi.gradle'
+//apply from: '../extensionsGradle.gradle'
 
 
 //###################################
@@ -91,8 +91,6 @@ tinkerPatch {
 def getTinkerIdValue() {
     return hasProperty("TINKER_ID") ? TINKER_ID : "123456789"
 }
-// gitSha
-// ERROR: Gradle DSL method not found: 'gitSha()'
 
 buildscript {
     repositories {
@@ -104,8 +102,8 @@ buildscript {
     }
     dependencies {
         //格式为 groupId : artifactId : version
-        classpath 'com.demo.plugin1:daviPlu:1.6.1'
-        classpath 'com.davi.pkg:dp:1.2.3'
+        //classpath 'com.demo.plugin1:daviPlu:1.6.1'
+        //classpath 'com.davi.pkg:dp:1.2.3'
         classpath 'com.davi.tinker.patch.gradle.plugin:davi-tinker-patch-gradle-plugin:1.2.4'
     }
 }
