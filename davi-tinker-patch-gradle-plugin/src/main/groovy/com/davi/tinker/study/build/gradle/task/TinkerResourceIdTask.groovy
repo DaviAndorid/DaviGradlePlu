@@ -38,12 +38,27 @@ public class TinkerResourceIdTask extends DefaultTask {
          * Android Gradle 插件 3.0.0 及更高版本默认情况下会启用 AAPT2
          * 官方：https://developer.android.com/studio/command-line/aapt2?hl=zh-cn
          * 简书：https://www.jianshu.com/p/839969887e2c
+         *
+         *
          * 【AAPT1】
          * 只改变了一个资源文件，也要进行全量编译
          *
+         *
+         * 【AAPT2】
+         * 1）aapt2将原先的资源编译打包过程拆分成了两部分，即编译和链接。
+         *      - 编译：将资源文件编译为二进制格式文件
+         *      - 链接：将编译后的所有文件合并，打包成一个单独文件
+         *
+         *      好处：
+         *          - 这种方式可以很好的提升资源的编译性能，比如只有一个资源文件发送改变时，
+         *          你只需要重新编译改变的文件，然后将其与其他未改变的资源进行链接即可
+         *
+         *          - 而之前的aapt是将所有资源进行merge，merge完后将所有资源进行编译，产生一个资源ap_文件，
+         *          该文件是一个压缩包，这样带来的后果就是即使只改变了一个资源文件，也要进行全量编译。
+         *
+         *
          * ？？？
          * 没有开启aapt2的话，为什么要《skip stable ids inject》？？？？
-         *
          * */
         if (!isAapt2EnabledCompat(project)) {
             project.logger.error('AApt2 is not enabled, skip stable ids inject.')
@@ -65,6 +80,7 @@ public class TinkerResourceIdTask extends DefaultTask {
          * 主要介绍如何在固定id的同时，将该资源进行导出，打上public标记，供其他资源进行引用
          * 链接：https://blog.csdn.net/omnispace/article/details/79803149
          * */
+        //【关键点】指定稳定的资源id映射文件，达到固定资源id的作用
         //stableIdsFile = project.buildDir/intermediates/tinker_intermediates/public.txt
         def stableIdsFile = project.file(TinkerBuildPath.getResourcePublicTxt(project))
         if (!stableIdsFile.exists()) {
@@ -76,6 +92,10 @@ public class TinkerResourceIdTask extends DefaultTask {
         stableIdsFile.createNewFile()
 
         /**
+         * ***********************
+         * 给 aapt 执行时，添加额外参数
+         * ************************
+         *
          * aaptOptions.additionalParameters：
          * 类型：List< String >
          * 描述：给 aapt 执行时添加额外参数，添加的参数可通过 aapt --help 进行查看。
@@ -87,7 +107,7 @@ public class TinkerResourceIdTask extends DefaultTask {
             additionalParams = new ArrayList<>()
             project.android.aaptOptions.additionalParameters = additionalParams
         }
-        //使用导出的符号表进行资源id的固定
+        //【关键点】文件可以被–stable-ids参数使用
         additionalParams.add('--stable-ids')
         additionalParams.add(stableIdsFile.getAbsolutePath())
         project.logger.error("AApt2 is enabled, inject ${stableIdsFile.getAbsolutePath()} into aapt options.")

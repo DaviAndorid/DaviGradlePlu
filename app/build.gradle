@@ -95,8 +95,6 @@ def getTinkerIdValue() {
 buildscript {
     repositories {
         maven {
-            //本地Maven仓库地址
-            //这里是发布在本地文件夹了
             url uri('../repo')
         }
     }

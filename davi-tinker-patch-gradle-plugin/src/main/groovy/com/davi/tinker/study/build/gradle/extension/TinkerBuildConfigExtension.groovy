@@ -60,6 +60,7 @@ public class TinkerBuildConfigExtension {
 
     public TinkerBuildConfigExtension(Project project) {
         this.project = project
+
         applyMapping = ""
         applyResourceMapping = ""
         tinkerId = null
