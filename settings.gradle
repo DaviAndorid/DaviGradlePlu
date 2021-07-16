@@ -3,7 +3,7 @@
  * isLoadApp 在 《gradle.properties》文件中定义
  * */
 if (isLoadApp) {
-    include ':app', ':davi-plu', ':javalibAndGradle', ':artifactJavaDemoLib', ':davi-tinker-patch-gradle-plugin'
+    include ':app', ':davi-plu', ':javalibAndGradle', ':artifactJavaDemoLib', ':davi-tinker-patch-gradle-plugin', ':hookfixstudy'
 }
 include ':lifecycle-plugin'
 rootProject.name = 'DaviPlu'
