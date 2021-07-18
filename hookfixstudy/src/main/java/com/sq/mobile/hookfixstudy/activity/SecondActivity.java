@@ -1,4 +1,4 @@
-package com.sq.mobile.hookfixstudy;
+package com.sq.mobile.hookfixstudy.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
