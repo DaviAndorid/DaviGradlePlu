@@ -21,7 +21,8 @@ public class AMSHookHelper {
                 "gDefault");
 
         // gDefault是一个 android.util.Singleton<T>对象; 我们取出这个单例里面的mInstance字段
-        Object mInstance = RefInvoke.getFieldObject("android.util.Singleton", gDefault, "mInstance");
+        Object mInstance = RefInvoke.getFieldObject("android.util.Singleton",
+                gDefault, "mInstance");
 
         // 创建一个这个对象的代理对象MockClass1, 然后替换这个字段, 让我们的代理对象帮忙干活
         Class<?> classB2Interface = Class.forName("android.app.IActivityManager");

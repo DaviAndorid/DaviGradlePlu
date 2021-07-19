@@ -1,14 +1,16 @@
-package com.sq.mobile.hookfixstudy.HmCallbackHook;
+package com.sq.mobile.hookfixstudy.plu_start_activity;
 
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 
-public class MockClass2 implements Handler.Callback {
+import com.sq.mobile.hookfixstudy.RefInvoke;
+
+public class plu_start_activity_MockClass2 implements Handler.Callback {
 
     Handler mBase;
 
-    public MockClass2(Handler base) {
+    public plu_start_activity_MockClass2(Handler base) {
         mBase = base;
     }
 
@@ -21,18 +23,24 @@ public class MockClass2 implements Handler.Callback {
             case 100:
                 handleLaunchActivity(msg);
                 break;
+
         }
 
         mBase.handleMessage(msg);
         return true;
     }
 
+
     private void handleLaunchActivity(Message msg) {
         // 这里简单起见,直接取出TargetActivity;
-
         Object obj = msg.obj;
 
-        Log.d("davi", obj.toString());
+        // 把替身恢复成真身
+        Intent intent = (Intent) RefInvoke.getFieldObject(obj, "intent");
+
+        Intent targetIntent = intent.getParcelableExtra(plu_start_activity_AMSHookHelper.EXTRA_TARGET_INTENT);
+        intent.setComponent(targetIntent.getComponent());
     }
+
 
 }
