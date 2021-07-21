@@ -42,12 +42,19 @@ task clearJar(type: Delete) {
     delete 'build/outputs/mypluginlibrary.jar'
 }
 
+def jarName = 'mypluginlibrary1-2.jar'
 task makeJar(type: Copy) {
+    //1）生成的jar，拷贝到当前模块的build下
     //https://www.jianshu.com/p/bcee84e53fd2
     from('build/intermediates/packaged-classes/release/')
     into('build/outputs/')
     include('classes.jar')
-    rename('classes.jar', 'mypluginlibrary.jar')
+    rename('classes.jar', jarName)
+    //2）build输出的jar，拷贝到插件模块，方便插件模块使用
+    copy {
+        from "build/outputs/${jarName}"
+        into "$rootDir/hook_fix_plu_one/libs"
+    }
 }
 
 makeJar.dependsOn(clearJar, build)

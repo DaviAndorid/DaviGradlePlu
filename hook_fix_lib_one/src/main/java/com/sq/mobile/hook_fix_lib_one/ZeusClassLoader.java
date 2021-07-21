@@ -2,6 +2,7 @@ package com.sq.mobile.hook_fix_lib_one;
 
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -34,27 +35,37 @@ class ZeusClassLoader extends PathClassLoader {
         Class<?> clazz = null;
         try {
             //先查找parent classLoader，这里实际就是系统帮我们创建的classLoader，目标对应为宿主apk
-            clazz = getParent().loadClass(className);
-        } catch (ClassNotFoundException ignored) {
-
+            if (getParent() == null) {
+                Log.e("daviAndroid", "失败：先查找parent classLoader");
+            } else {
+                clazz = getParent().loadClass(className);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e("daviAndroid", "loadClass Exception ： " + e.getMessage());
         }
 
         if (clazz != null) {
+            Log.i("daviAndroid", "loadClass ok..");
             return clazz;
         }
 
         //挨个的到插件里进行查找
         if (mClassLoaderList != null) {
             for (DexClassLoader classLoader : mClassLoaderList) {
-                if (classLoader == null) continue;
+                if (classLoader == null) {
+                    Log.i("daviAndroid", "classLoader is nul, so continue");
+                    continue;
+                }
                 try {
                     //这里只查找插件它自己的apk，不需要查parent，避免多次无用查询，提高性能
                     clazz = classLoader.loadClass(className);
                     if (clazz != null) {
                         return clazz;
                     }
-                } catch (ClassNotFoundException ignored) {
-
+                } catch (Exception ignored) {
+                    ignored.printStackTrace();
+                    Log.i("daviAndroid", "挨个的到插件里进行查找 err : " + ignored.getMessage());
                 }
             }
         }

@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">hook_fix_plu_one</string>
+
+    <string name="string_plu_hello">I come from plu!!!</string>
 </resources>

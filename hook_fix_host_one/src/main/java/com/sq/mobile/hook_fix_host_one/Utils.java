@@ -3,6 +3,7 @@ package com.sq.mobile.hook_fix_host_one;
 
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.util.Log;
 
 import java.io.Closeable;
 import java.io.File;
@@ -20,6 +21,8 @@ public class Utils {
      * @param sourceName
      */
     public static void extractAssets(Context context, String sourceName) {
+        Log.i("daviAndroid", "【extractAssets】--> " + sourceName);
+
         AssetManager am = context.getAssets();
         InputStream is = null;
         FileOutputStream fos = null;
@@ -33,8 +36,11 @@ public class Utils {
                 fos.write(buffer, 0, count);
             }
             fos.flush();
+            Log.i("daviAndroid", "【extractAssets】--> ing... = " + extractFile);
+            Log.i("daviAndroid", "【extractAssets】--> ok");
         } catch (IOException e) {
             e.printStackTrace();
+            Log.i("daviAndroid", "【extractAssets】err --> IOException");
         } finally {
             closeSilently(is);
             closeSilently(fos);

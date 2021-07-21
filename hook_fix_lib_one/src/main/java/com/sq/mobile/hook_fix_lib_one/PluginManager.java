@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
+import android.util.Log;
 
 import java.io.File;
 import java.lang.reflect.Method;
@@ -78,6 +79,8 @@ public class PluginManager {
         File dexOutputDir = mBaseContext.getDir("dex", Context.MODE_PRIVATE);
         final String dexOutputPath = dexOutputDir.getAbsolutePath();
         for (PluginItem plugin : plugins) {
+            Log.i("daviAndroid", "多插件方案 : " + plugin.pluginPath);
+
             DexClassLoader dexClassLoader = new DexClassLoader(plugin.pluginPath,
                     dexOutputPath, null, mBaseClassLoader);
             classLoader.addPluginClassLoader(dexClassLoader);

@@ -28,7 +28,7 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     //implementation project(":hook_fix_lib_one")
-    provided files("libs/mypluginlibrary.jar")
+    provided files("libs/mypluginlibrary1-2.jar")
 
     implementation 'androidx.appcompat:appcompat:1.0.2'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
@@ -47,12 +47,12 @@ assemble.doLast {
         if (variant.name == "release") {
             variant.outputs.each { output ->
                 File originFile = output.outputFile
-                println originFile.absolutePath
+                println "daviAndroid" + originFile.absolutePath
 
                 copy {
                     from originFile
                     into "$rootDir/hook_fix_host_one/src/main/assets"
-                    rename(originFile.name, "plugin1.apk")
+                    rename(originFile.name, "plugin1-2.apk")
                 }
             }
         }
