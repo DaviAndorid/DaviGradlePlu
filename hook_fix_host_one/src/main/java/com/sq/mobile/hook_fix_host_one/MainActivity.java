@@ -1,6 +1,7 @@
 package com.sq.mobile.hook_fix_host_one;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,11 +10,14 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.sq.mobile.hook_fix_lib_one.DLUtils;
 import com.sq.mobile.hook_fix_lib_one.IBean;
 import com.sq.mobile.hook_fix_lib_one.ICallback;
 import com.sq.mobile.hook_fix_lib_one.IDynamic;
+import com.sq.mobile.hook_fix_lib_one.PluginItem;
 import com.sq.mobile.hook_fix_lib_one.RefInvoke;
 
+import java.io.File;
 import java.lang.reflect.Method;
 
 public class MainActivity extends BaseActivity {
@@ -30,7 +34,41 @@ public class MainActivity extends BaseActivity {
         //testLoadPlu();
         //loadBeanInterfaceTest();
         //readResFromPlu();
-        changeSkinFromPlu();
+        //changeSkinFromPlu();
+        startService1InPlugin1(PLU_APK_NAME_LIST[0],this);
+    }
+
+
+    /***
+     * 最简单的插件化解决方案，其对于四大组件都是适用
+     * */
+
+    public void startService1InPlugin1(final String apkName , final Context context) {
+        Button btn_8 = (Button) findViewById(R.id.btn_8);
+        btn_8.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PluginItem pluginItem1 = generatePluginItem(apkName);
+                try {
+                    Intent intent = new Intent();
+                    String serviceName = pluginItem1.packageInfo.packageName + ".TestService1";
+                    intent.setClass(context, Class.forName(serviceName));
+                    startService(intent);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+    }
+
+    private PluginItem generatePluginItem(String apkName) {
+        File file = getFileStreamPath(apkName);
+        PluginItem item = new PluginItem();
+        item.pluginPath = file.getAbsolutePath();
+        item.packageInfo = DLUtils.getPackageInfo(this, item.pluginPath);
+        return item;
     }
 
 

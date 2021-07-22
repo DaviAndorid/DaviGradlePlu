@@ -67,6 +67,15 @@ public class RefInvoke {
     }
 
     //多个参数
+
+    /**
+     * 构造插件 Element(
+     * File file,
+     * boolean isDirectory,
+     * File zip,
+     * DexFile dexFile
+     * ) 这个构造函数
+     */
     public static Object createObject(Class clazz, Class[] pareTyples, Object[] pareVaules) {
         try {
             Constructor ctor = clazz.getDeclaredConstructor(pareTyples);

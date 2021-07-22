@@ -18,6 +18,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- 插件占位 -->
+        <service android:name="com.sq.mobile.hook_fix_plu_one.TestService1" />
     </application>
 
 </manifest>

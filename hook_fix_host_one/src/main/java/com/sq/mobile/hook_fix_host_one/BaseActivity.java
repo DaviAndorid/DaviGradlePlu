@@ -78,6 +78,10 @@ public class BaseActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * todo ：4.4手机下的适配
+     * 根据插件，生成资源对象，如：Resources/Theme等
+     */
     protected void loadResources(String dexpath) {
         //把插件Plugin的路径，添加到这个AssetManager对象中
         try {
@@ -108,7 +112,8 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     /**
-     * 根据插件，生成classLoader等插件信息
+     * 根据插件，生成PluginInfo信息，如：classLoader
+     * 保存起来，需要用的时候使用
      */
     protected void genegatePluginInfo() {
         for (int i = 0; i < PLU_APK_NAME_LIST.length; i++) {
@@ -125,4 +130,25 @@ public class BaseActivity extends AppCompatActivity {
     protected HashMap<String, PluginInfo> plugins = new HashMap<String, PluginInfo>();
 
 
+    /***
+     *
+     * 最简单的，插件支持四大组件模式：
+     * 1）合并所有插件的dex，来解决插件的类的加载问题。
+     * 2）宿主的AndroidManifest文件中声明插件中的四大组件
+     * 3）插件中的所有资源一次性地合并到宿主的资源中
+     *
+     * */
+    protected void patchClassLoader() {
+        final String apkName = "plugin1.apk";
+        final String dexName = "plugin1.dex";//todo ？？？怎么来的？？
+
+        File dexFile = getFileStreamPath(apkName);
+        File optDexFile = getFileStreamPath(dexName);
+
+        try {
+            BaseDexClassLoaderHookHelper.patchClassLoader(getClassLoader(), dexFile, optDexFile);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

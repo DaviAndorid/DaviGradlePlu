@@ -45,4 +45,10 @@
         android:layout_height="wrap_content"
         android:text="【插件2】换肤" />
 
+    <Button
+        android:id="@+id/btn_8"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="【插件1】最简单方式启动插件的组件（service）" />
+
 </LinearLayout>
