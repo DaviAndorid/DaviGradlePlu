@@ -57,11 +57,20 @@ public class MainActivity extends BaseActivity {
 
     private void doSomething(ClassLoader cl) {
         try {
+            /**
+             * 方式1：插件中封装接口方式，如：UIUtil
+             * */
             Class clazz = cl.loadClass("com.sq.mobile.hook_fix_plu_second.UIUtil");
-
             String str = (String) RefInvoke.invokeStaticMethod(clazz, "getTextString", Context.class, this);
-            Toast.makeText(getApplicationContext(), str + "", Toast.LENGTH_LONG).show();
+            //Toast.makeText(getApplicationContext(), str + "", Toast.LENGTH_LONG).show();
             //textV.setText(str);
+
+            /***
+             * 方式2：直接访问插件的资源id的值，不需要接口封装
+             * */
+            Class stringClass = cl.loadClass("com.sq.mobile.hook_fix_plu_second.R$string");
+            int resId1 = (int) RefInvoke.getStaticFieldObject(stringClass, "app_name");
+            Toast.makeText(getApplicationContext(), getResources().getString(resId1) + "", Toast.LENGTH_LONG).show();
 
             //Drawable drawable = (Drawable) RefInvoke.invokeStaticMethod(clazz, "getImageDrawable", Context.class, this);
             //imgV.setBackground(drawable);
