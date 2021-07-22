@@ -17,9 +17,11 @@ import static java.lang.System.arraycopy;
 class ZeusClassLoader extends PathClassLoader {
     private List<DexClassLoader> mClassLoaderList = null;
 
+    String mDexPath;
+
     public ZeusClassLoader(String dexPath, ClassLoader parent) {
         super(dexPath, parent);
-
+        mDexPath = dexPath;
         mClassLoaderList = new ArrayList<DexClassLoader>();
     }
 
@@ -51,21 +53,22 @@ class ZeusClassLoader extends PathClassLoader {
         }
 
         //挨个的到插件里进行查找
+        Log.i("daviAndroid", "【ClassLoader】开始 挨个的到插件里进行查找 ... ");
         if (mClassLoaderList != null) {
             for (DexClassLoader classLoader : mClassLoaderList) {
-                if (classLoader == null) {
-                    Log.i("daviAndroid", "classLoader is nul, so continue");
-                    continue;
-                }
+                Log.i("daviAndroid", "【ClassLoader】插件 --> " + mClassLoaderList.indexOf(classLoader));
+                Log.i("daviAndroid", "【ClassLoader】插件 mDexPath = " + mDexPath);
+
                 try {
                     //这里只查找插件它自己的apk，不需要查parent，避免多次无用查询，提高性能
                     clazz = classLoader.loadClass(className);
                     if (clazz != null) {
+                        Log.i("daviAndroid", "【ClassLoader】loadClass ok..");
                         return clazz;
                     }
                 } catch (Exception ignored) {
                     ignored.printStackTrace();
-                    Log.i("daviAndroid", "挨个的到插件里进行查找 err : " + ignored.getMessage());
+                    Log.e("daviAndroid", "【ClassLoader】挨个的到插件里进行查找 err : " + ignored.getMessage());
                 }
             }
         }

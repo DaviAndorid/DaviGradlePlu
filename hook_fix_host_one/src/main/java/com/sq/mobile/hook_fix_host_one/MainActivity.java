@@ -1,5 +1,7 @@
 package com.sq.mobile.hook_fix_host_one;
 
+import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -10,6 +12,7 @@ import android.widget.Toast;
 import com.sq.mobile.hook_fix_lib_one.IBean;
 import com.sq.mobile.hook_fix_lib_one.ICallback;
 import com.sq.mobile.hook_fix_lib_one.IDynamic;
+import com.sq.mobile.hook_fix_lib_one.RefInvoke;
 
 import java.lang.reflect.Method;
 
@@ -26,13 +29,56 @@ public class MainActivity extends BaseActivity {
 
         //testLoadPlu();
         //loadBeanInterfaceTest();
-        readResFromPlu();
+        //readResFromPlu();
+        changeSkinFromPlu();
     }
 
 
-    /*********************
-     * 读取插件里的一个字符串资源
-     ********************/
+    /*********************************
+     * 换肤【插件2】
+     **********************************/
+    void changeSkinFromPlu() {
+        Button btn_7 = (Button) findViewById(R.id.btn_7);
+        btn_7.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PluginInfo info = plugins.get(PLU_APK_NAME_LIST[1]);
+                if (info == null) {
+                    return;
+                }
+                //资源加载，构建AssetManager/Resources等
+                loadResources(info.getDexPath());
+
+                //使用资源
+                doSomething(info.getClassLoader());
+            }
+        });
+    }
+
+    private void doSomething(ClassLoader cl) {
+        try {
+            Class clazz = cl.loadClass("com.sq.mobile.hook_fix_plu_second.UIUtil");
+
+            String str = (String) RefInvoke.invokeStaticMethod(clazz, "getTextString", Context.class, this);
+            Toast.makeText(getApplicationContext(), str + "", Toast.LENGTH_LONG).show();
+            //textV.setText(str);
+
+            //Drawable drawable = (Drawable) RefInvoke.invokeStaticMethod(clazz, "getImageDrawable", Context.class, this);
+            //imgV.setBackground(drawable);
+
+            //layout.removeAllViews();
+            //View view = (View) RefInvoke.invokeStaticMethod(clazz, "getLayout", Context.class, this);
+            //layout.addView(view);
+
+        } catch (Exception e) {
+            Log.e(TAG, "【doSomething】msg : " + e.getMessage());
+        }
+    }
+
+
+    /*********************************
+     * 读取插件里的一个字符串资源【插件1】
+     **********************************/
     void readResFromPlu() {
         final String classPlu = "com.sq.mobile.hook_fix_plu_one.Dynamic";
 
@@ -43,7 +89,7 @@ public class MainActivity extends BaseActivity {
         btn_6.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                loadResources();
+                loadResources(plugins.get(PLU_APK_NAME_LIST[0]).getDexPath());
                 Class mLoadClassDynamic = null;
 
                 try {

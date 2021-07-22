@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.File;
 import java.lang.reflect.Method;
+import java.util.HashMap;
 
 import dalvik.system.DexClassLoader;
 
@@ -21,59 +22,63 @@ public class BaseActivity extends AppCompatActivity {
     protected AssetManager mAssetManager;
     protected Resources mResources;
     protected Resources.Theme mTheme;
-    protected String dexpath = null;    //apk文件地址
-    protected File fileRelease = null;  //释放目录
     protected DexClassLoader classLoader = null;
-    protected String apkName = "plugin1-2.apk";    //apk名称
+
+    /**
+     * 插件apk的名字
+     */
+    protected static final String[] PLU_APK_NAME_LIST = {
+            "plugin1-3.apk",
+            "plugin2-0.apk"
+    };
 
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(newBase);
-
         copyFromAssets(newBase);
     }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        loadPlu();
+        genegatePluginInfo();
     }
 
     @Override
     public AssetManager getAssets() {
         if (mAssetManager == null) {
-            Log.e(TAG, "【getAssets】HostApp中的资源");
+            //Log.e(TAG, "【getAssets】HostApp中的资源");
             return super.getAssets();
         }
 
-        Log.e(TAG, "【getAssets】mAssetManager is not null");
+        //Log.e(TAG, "【getAssets】mAssetManager 包含插件的");
         return mAssetManager;
     }
 
     @Override
     public Resources getResources() {
         if (mResources == null) {
-            Log.e(TAG, "【getResources】HostApp中的资源");
+            //Log.e(TAG, "【getResources】HostApp中的资源");
             return super.getResources();
         }
 
-        Log.e(TAG, "【getResources】mResources is not null");
+        //Log.e(TAG, "【getResources】mResources 包含插件的");
         return mResources;
     }
 
     @Override
     public Resources.Theme getTheme() {
         if (mTheme == null) {
-            Log.e(TAG, "【getTheme】HostApp中的资源");
+            //Log.e(TAG, "【getTheme】HostApp中的资源");
             return super.getTheme();
         }
 
-        Log.e(TAG, "【getTheme】Theme is not null");
+        ///Log.e(TAG, "【getTheme】Theme 包含插件的");
         return mTheme;
     }
 
 
-    protected void loadResources() {
+    protected void loadResources(String dexpath) {
         //把插件Plugin的路径，添加到这个AssetManager对象中
         try {
             AssetManager assetManager = AssetManager.class.newInstance();
@@ -93,26 +98,31 @@ public class BaseActivity extends AppCompatActivity {
         mTheme.setTo(super.getTheme());
     }
 
-
+    /**
+     * 把Assets里面得文件复制到 /data/data/files 目录下
+     */
     void copyFromAssets(Context newBase) {
-        try {
-            /**
-             * 把Assets里面得文件复制到 /data/data/files 目录下
-             */
-            Utils.extractAssets(newBase, apkName);
-        } catch (Throwable e) {
-            e.printStackTrace();
+        for (int i = 0; i < PLU_APK_NAME_LIST.length; i++) {
+            Utils.extractAssets(newBase, PLU_APK_NAME_LIST[i]);
         }
     }
 
-    void loadPlu() {
-        //classLoader 的构建
-        File extractFile = this.getFileStreamPath(apkName);
-        dexpath = extractFile.getPath();
-        fileRelease = getDir("dex", 0); //0 表示Context.MODE_PRIVATE
-        Log.d(TAG, "【loadPlu】dexpath: " + dexpath);
-        Log.d(TAG, "【loadPlu】fileRelease.getAbsolutePath(): " + fileRelease.getAbsolutePath());
-        classLoader = new DexClassLoader(dexpath, fileRelease.getAbsolutePath(), null, getClassLoader());
+    /**
+     * 根据插件，生成classLoader等插件信息
+     */
+    protected void genegatePluginInfo() {
+        for (int i = 0; i < PLU_APK_NAME_LIST.length; i++) {
+            String pluginName = PLU_APK_NAME_LIST[i];
+            File extractFile = this.getFileStreamPath(pluginName);
+            File fileRelease = getDir("dex", 0);
+            String dexpath = extractFile.getPath();
+            DexClassLoader classLoader = new DexClassLoader(dexpath, fileRelease.getAbsolutePath(),
+                    null, getClassLoader());
+            plugins.put(pluginName, new PluginInfo(dexpath, classLoader));
+        }
     }
+
+    protected HashMap<String, PluginInfo> plugins = new HashMap<String, PluginInfo>();
+
 
 }
