@@ -1,8 +1,7 @@
-package com.sq.mobile.hook_fix_host_one;
+package com.sq.mobile.hook_fix_host_one.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -10,6 +9,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.sq.mobile.hook_fix_host_one.PluginInfo;
+import com.sq.mobile.hook_fix_host_one.R;
 import com.sq.mobile.hook_fix_lib_one.DLUtils;
 import com.sq.mobile.hook_fix_lib_one.IBean;
 import com.sq.mobile.hook_fix_lib_one.ICallback;
@@ -35,7 +36,7 @@ public class MainActivity extends BaseActivity {
         //loadBeanInterfaceTest();
         //readResFromPlu();
         //changeSkinFromPlu();
-        startService1InPlugin1(PLU_APK_NAME_LIST[0],this);
+        //startService1InPlugin1(PLU_APK_NAME_LIST[0],this);
     }
 
 

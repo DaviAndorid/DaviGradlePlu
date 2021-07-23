@@ -1,4 +1,4 @@
-package com.sq.mobile.hook_fix_host_one;
+package com.sq.mobile.hook_fix_host_one.activity;
 
 import android.app.Activity;
 import android.content.Context;
@@ -9,6 +9,10 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.sq.mobile.hook_fix_host_one.BaseDexClassLoaderHookHelper;
+import com.sq.mobile.hook_fix_host_one.PluginInfo;
+import com.sq.mobile.hook_fix_host_one.Utils;
 
 import java.io.File;
 import java.lang.reflect.Method;

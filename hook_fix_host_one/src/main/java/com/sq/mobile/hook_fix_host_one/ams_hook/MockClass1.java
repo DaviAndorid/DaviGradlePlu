@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.sq.mobile.hook_fix_host_one.MyApplication;
-import com.sq.mobile.hook_fix_host_one.StubActivity;
+import com.sq.mobile.hook_fix_host_one.activity.StubActivity;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;

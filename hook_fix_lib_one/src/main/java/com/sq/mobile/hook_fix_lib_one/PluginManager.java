@@ -38,11 +38,16 @@ public class PluginManager {
     public static volatile ClassLoader mNowClassLoader = null;          //系统原始的ClassLoader
     public static volatile ClassLoader mBaseClassLoader = null;         //系统原始的ClassLoader
 
+    /***
+     * 【支持多插件】
+     *1）把Assets里面得文件复制到 /data/data/files 目录下
+     *2）插件信息转换为内存对象" PluginItem "
+     * */
     public static void init(Application application) {
         /**
          * 初始化一些成员变量和加载已安装的插件
          * */
-        //变量 mPackageInfo 是一个LoadApk对象
+        //变量 mPackageInfo 是一个 LoadApk 对象
         mPackageInfo = RefInvoke.getFieldObject(application.getBaseContext(), "mPackageInfo");
         mBaseContext = application.getBaseContext();
         mNowResources = mBaseContext.getResources();
@@ -75,7 +80,10 @@ public class PluginManager {
         }
 
         //多插件方案，classLoader
-        ZeusClassLoader classLoader = new ZeusClassLoader(mBaseContext.getPackageCodePath(), mBaseContext.getClassLoader());
+        ZeusClassLoader classLoader = new ZeusClassLoader(
+                mBaseContext.getPackageCodePath(),
+                mBaseContext.getClassLoader(),
+                plugins);
         File dexOutputDir = mBaseContext.getDir("dex", Context.MODE_PRIVATE);
         final String dexOutputPath = dexOutputDir.getAbsolutePath();
         for (PluginItem plugin : plugins) {

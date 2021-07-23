@@ -10,7 +10,18 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+
+        <!-- 【宿主】 -->
+        <activity android:name=".activity.MainActivity">
+            <!-- <intent-filter>
+                 <action android:name="android.intent.action.MAIN" />
+                 <action android:name="android.intent.action.VIEW" />
+
+                 <category android:name="android.intent.category.LAUNCHER" />
+             </intent-filter>-->
+        </activity>
+
+        <activity android:name=".activity.EasyHookActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW" />
@@ -19,8 +30,13 @@
             </intent-filter>
         </activity>
 
-        <!-- 插件占位 -->
+        <activity android:name="com.sq.mobile.hook_fix_host_one.activity.ActivityA"/>
+
+
+        <!-- 【插件】占位 -->
         <service android:name="com.sq.mobile.hook_fix_plu_one.TestService1" />
+        <activity android:name="com.sq.mobile.hook_fix_plu_one.TestActivity1"/>
+
     </application>
 
 </manifest>

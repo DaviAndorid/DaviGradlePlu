@@ -41,7 +41,7 @@ dependencies {
  * 【对插件进行代码调试】
  * 打包后把apk的名字改为plugin1.apk，并复制到宿主HostApp的assets目录下：
  * */
-def pluName = 'plugin1-3.apk'
+def pluName = 'plugin1-4.apk'
 assemble.doLast {
     android.applicationVariants.all { variant ->
         // Copy Release artifact to HostApp's assets and rename

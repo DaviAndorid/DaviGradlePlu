@@ -19,10 +19,13 @@ class ZeusClassLoader extends PathClassLoader {
 
     String mDexPath;
 
-    public ZeusClassLoader(String dexPath, ClassLoader parent) {
+    private List<PluginItem> plugins = null;
+
+    public ZeusClassLoader(String dexPath, ClassLoader parent, List<PluginItem> p) {
         super(dexPath, parent);
         mDexPath = dexPath;
         mClassLoaderList = new ArrayList<DexClassLoader>();
+        plugins = p;
     }
 
     /**
@@ -48,7 +51,7 @@ class ZeusClassLoader extends PathClassLoader {
         }
 
         if (clazz != null) {
-            Log.i("daviAndroid", "loadClass ok..");
+            Log.i("daviAndroid", "【系统的classLoader】【目标对应为宿主apk】loadClass ok..");
             return clazz;
         }
 
@@ -56,14 +59,16 @@ class ZeusClassLoader extends PathClassLoader {
         Log.i("daviAndroid", "【ClassLoader】开始 挨个的到插件里进行查找 ... ");
         if (mClassLoaderList != null) {
             for (DexClassLoader classLoader : mClassLoaderList) {
-                Log.i("daviAndroid", "【ClassLoader】插件 --> " + mClassLoaderList.indexOf(classLoader));
-                Log.i("daviAndroid", "【ClassLoader】插件 mDexPath = " + mDexPath);
+                int index = mClassLoaderList.indexOf(classLoader);
+                String pluginPath = plugins.get(index).pluginPath;
+                Log.i("daviAndroid", "【ClassLoader】插件 --> " + index);
+                Log.i("daviAndroid", "【ClassLoader】插件 -->" + pluginPath);
 
                 try {
                     //这里只查找插件它自己的apk，不需要查parent，避免多次无用查询，提高性能
                     clazz = classLoader.loadClass(className);
                     if (clazz != null) {
-                        Log.i("daviAndroid", "【ClassLoader】loadClass ok..");
+                        Log.i("daviAndroid", pluginPath + "：loadClass ok..");
                         return clazz;
                     }
                 } catch (Exception ignored) {

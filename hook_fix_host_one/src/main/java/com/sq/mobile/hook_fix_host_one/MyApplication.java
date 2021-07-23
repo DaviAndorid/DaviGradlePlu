@@ -26,23 +26,17 @@ public class MyApplication extends Application {
         //2）插件classLoader处理
         PluginManager.init(this);
 
-        //get json data from server
-        mockData();
-
-        try {
-            //activity  清单文件 欺骗AMS
-            AMSHookHelper.hookAMN();
-            //activity 启动 欺骗AMS
-            AMSHookHelper.hookActivityThread();
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
+        //testHookActivity();
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
 
+        //testHookApplication()
+    }
+
+    void testHookApplication() {
         /**
          * Application 的插件化解决方案
          * */
@@ -63,6 +57,22 @@ public class MyApplication extends Application {
             }
         }
     }
+
+
+    void testHookActivity() {
+        //get json data from server
+        mockData();
+
+        try {
+            //activity  清单文件 欺骗AMS
+            AMSHookHelper.hookAMN();
+            //activity 启动 欺骗AMS
+            AMSHookHelper.hookActivityThread();
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
+
 
     void mockData() {
         pluginActivies.put("jianqiang.com.plugin1.ActivityA", "jianqiang.com.hostapp.SingleTopActivity1");

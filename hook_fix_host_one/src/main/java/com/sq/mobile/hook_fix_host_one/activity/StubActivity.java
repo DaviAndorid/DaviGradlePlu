@@ -1,4 +1,4 @@
-package com.sq.mobile.hook_fix_host_one;
+package com.sq.mobile.hook_fix_host_one.activity;
 
 
 import android.app.Activity;
