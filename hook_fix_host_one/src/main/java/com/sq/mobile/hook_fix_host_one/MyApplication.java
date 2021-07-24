@@ -59,7 +59,7 @@ public class MyApplication extends Application {
     }
 
 
-    void testHookActivity() {
+    public static void testHookActivity() {
         //get json data from server
         mockData();
 
@@ -74,7 +74,7 @@ public class MyApplication extends Application {
     }
 
 
-    void mockData() {
+    static void mockData() {
         pluginActivies.put("jianqiang.com.plugin1.ActivityA", "jianqiang.com.hostapp.SingleTopActivity1");
         pluginActivies.put("jianqiang.com.plugin1.TestActivity1", "jianqiang.com.hostapp.SingleTaskActivity2");
     }

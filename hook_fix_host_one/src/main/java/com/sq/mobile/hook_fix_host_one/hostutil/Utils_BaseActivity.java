@@ -1,9 +1,11 @@
-package com.sq.mobile.hook_fix_host_one;
+package com.sq.mobile.hook_fix_host_one.hostutil;
 
 
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.util.Log;
+
+import com.sq.mobile.hook_fix_host_one.MyApplication;
 
 import java.io.Closeable;
 import java.io.File;
@@ -12,7 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 
-public class Utils {
+public class Utils_BaseActivity {
 
     /**
      * 把Assets里面得文件复制到 /data/data/files 目录下

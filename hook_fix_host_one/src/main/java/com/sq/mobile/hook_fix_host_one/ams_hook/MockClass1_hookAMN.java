@@ -12,14 +12,14 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
 
-class MockClass1 implements InvocationHandler {
+class MockClass1_hookAMN implements InvocationHandler {
 
-    private static final String TAG = "MockClass1";
+    private static final String TAG = "MockClass1_hookAMN";
     private static final String stubPackage = "jianqiang.com.hostapp";
 
     Object mBase;
 
-    public MockClass1(Object base) {
+    public MockClass1_hookAMN(Object base) {
         mBase = base;
     }
 

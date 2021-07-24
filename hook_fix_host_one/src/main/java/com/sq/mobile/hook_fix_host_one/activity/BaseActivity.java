@@ -1,6 +1,5 @@
 package com.sq.mobile.hook_fix_host_one.activity;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
@@ -12,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.sq.mobile.hook_fix_host_one.BaseDexClassLoaderHookHelper;
 import com.sq.mobile.hook_fix_host_one.PluginInfo;
-import com.sq.mobile.hook_fix_host_one.Utils;
+import com.sq.mobile.hook_fix_host_one.hostutil.Utils_BaseActivity;
 
 import java.io.File;
 import java.lang.reflect.Method;
@@ -111,7 +110,7 @@ public class BaseActivity extends AppCompatActivity {
      */
     void copyFromAssets(Context newBase) {
         for (int i = 0; i < PLU_APK_NAME_LIST.length; i++) {
-            Utils.extractAssets(newBase, PLU_APK_NAME_LIST[i]);
+            Utils_BaseActivity.extractAssets(newBase, PLU_APK_NAME_LIST[i]);
         }
     }
 
